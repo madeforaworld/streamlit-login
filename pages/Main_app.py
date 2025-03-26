@@ -1,6 +1,18 @@
 import streamlit as st
 from datetime import datetime, timedelta
-import random
+
+# Apply global light mode style override
+st.markdown("""
+    <style>
+        html, body, [data-testid="stApp"] {
+            background-color: #f9fafb;
+            color: #111;
+        }
+        .block-container {
+            background-color: #ffffff;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 # --- Fake User Info ---
 user_name = "Percy Plum"
@@ -8,14 +20,14 @@ user_avatar_url = "https://e7.pngegg.com/pngimages/687/86/png-clipart-google-log
 linked_drive = "Percy Google Drive"
 drive_icon = "https://www.gstatic.com/marketing-cms/assets/images/e8/4f/69d708b2455397d7b88b0312f7c5/google-drive.webp=s96-fcrop64=1,00000000ffffffff-rw"
 
-# --- Fake Content Grid Data ---
+# --- Fake Content Grid Data with Summary and Emoji Tokens ---
 fake_items = [
-    {"type": "News Article", "title": "AI Is Changing Journalism", "date": datetime.now() - timedelta(days=1), "preview": "https://www.bbc.com/news/tech-67683274", "hashtags": ["#AI", "#media", "#future"]},
-    {"type": "Recipe", "title": "Vegan Carbonara", "date": datetime.now() - timedelta(days=2), "preview": "https://minimalistbaker.com/vegan-carbonara/", "hashtags": ["#vegan", "#dinner", "#quickmeals"]},
-    {"type": "Todo", "title": "Finish MindTag MVP", "date": datetime.now() - timedelta(days=1), "preview": "Design + code content grid and onboarding.", "hashtags": ["#productivity", "#launch", "#founder"]},
-    {"type": "Thought", "title": "What if content was memory?", "date": datetime.now() - timedelta(days=3), "preview": "Need to explore link between mind & cloud.", "hashtags": ["#philosophy", "#UX", "#mind"]},
-    {"type": "Funny Video", "title": "Dog on Zoom Call", "date": datetime.now() - timedelta(days=1), "preview": "https://www.instagram.com/p/CwFunnyDog/", "hashtags": ["#funny", "#pets", "#lol"]},
-    {"type": "Book", "title": "The Creative Act", "date": datetime.now() - timedelta(days=4), "preview": "Highlight: Simplicity = power.", "hashtags": ["#creativity", "#simplicity", "#books"]}
+    {"type": "News Article", "title": "AI Is Changing Journalism", "date": datetime.now() - timedelta(days=1), "preview": "https://www.bbc.com/news/tech-67683274", "summary": "News article about how AI is impacting journalism.", "emoji": "📰", "hashtags": ["#AI", "#media", "#future"]},
+    {"type": "Recipe", "title": "Vegan Carbonara", "date": datetime.now() - timedelta(days=2), "preview": "https://minimalistbaker.com/vegan-carbonara/", "summary": "Vegan pasta recipe that takes about 30 minutes to cook and has 10 ingredients.", "emoji": "🍽️", "hashtags": ["#vegan", "#dinner", "#quickmeals"]},
+    {"type": "Todo", "title": "Finish MindTag MVP", "date": datetime.now() - timedelta(days=1), "preview": "Design + code content grid and onboarding.", "summary": "Task to finalize and polish the MindTag MVP features.", "emoji": "✅", "hashtags": ["#productivity", "#launch", "#founder"]},
+    {"type": "Thought", "title": "What if content was memory?", "date": datetime.now() - timedelta(days=3), "preview": "Need to explore link between mind & cloud.", "summary": "Idea exploring digital content as an extension of memory.", "emoji": "💭", "hashtags": ["#philosophy", "#UX", "#mind"]},
+    {"type": "Funny Video", "title": "Dog on Zoom Call", "date": datetime.now() - timedelta(days=1), "preview": "https://www.instagram.com/p/CwFunnyDog/", "summary": "Instagram video of a dog joining a Zoom call.", "emoji": "📹", "hashtags": ["#funny", "#pets", "#lol"]},
+    {"type": "Book", "title": "The Creative Act", "date": datetime.now() - timedelta(days=4), "preview": "Highlight: Simplicity = power.", "summary": "Insight from a book about the power of simplicity in creativity.", "emoji": "📚", "hashtags": ["#creativity", "#simplicity", "#books"]}
 ]
 
 # Filter for past 7 days
@@ -56,7 +68,12 @@ for i, item in enumerate(gridded_items):
         with st.container():
             st.markdown(
                 f"""
-                <div style='border-radius: 16px; background-color: #ffffff; padding: 1rem; box-shadow: 0 0 10px rgba(0,0,0,0.05);'>
+                <div style='border-radius: 16px; background-color: #ffffff; padding: 1rem; margin-bottom: 1rem; border: 1px solid #e2e2e2;'>
+                    <div style='display: flex; justify-content: space-between;'>
+                        <span style='font-size: 1.2rem;'>{item['summary']}</span>
+                        <span style='font-size: 1.5rem;'>{item['emoji']}</span>
+                    </div>
+                    <hr style='border: none; border-top: 1px solid #eee; margin: 0.5rem 0;'>
                     <strong>{item['title']}</strong><br>
                     {'<a href="' + item['preview'] + '">' + item['preview'] + '</a>' if item['preview'].startswith('http') else '<em>' + item['preview'] + '</em>'}<br>
                     <small>{item['type']} – Saved {item['date'].strftime('%b %d')}</small><br>
