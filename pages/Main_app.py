@@ -103,9 +103,13 @@ for i, item in enumerate(gridded_items):
                     <div>
                         {'<a href="' + item['preview'] + '" style="word-break: break-word;">' + item['preview'] + '</a>' if item['preview'].startswith('http') else '<em>' + item['preview'] + '</em>'}<br>
                         <small>{item['type']} – Saved {item['date'].strftime('%b %d')}</small>
-                        <div style='margin-top: 0.5rem;'>
-                            {" ".join([f"<span style='background:#f0f0f0;border-radius:8px;padding:2px 6px;margin-right:4px;font-size:0.8rem;'>{tag}</span>" for tag in item['hashtags']])}
-                        </div>
+                        <div style='margin-top: 0.75rem;'>
+    <div style='font-size: 0.85rem; font-weight: 600; color: #555;'>Folder & Tags</div>
+    <div style='display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;'>
+        <span style='background:#eef1f8; border: 1px solid #ccd6eb; border-radius: 16px; padding: 4px 10px; font-size: 0.8rem; font-weight: 600; color: #334;'>📁 {item['type']}</span>
+        {" ".join([f"<span style='background:#f0f0f0;border-radius:12px;padding:2px 8px;font-size:0.75rem;color:#333;'>{tag}</span>" for tag in item['hashtags']])}
+    </div>
+</div>
                     </div>
                 </div>
                 """,
