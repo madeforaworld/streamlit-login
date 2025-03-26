@@ -9,6 +9,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Step 1: Content Type Dropdown
+folder = st.selectbox("Select Folder", ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "Books"])
+
+if st.button("🧠 Generate AI Summary"):
+    st.info("AI will soon analyze your content and generate a summary here.")
+
 content_type = st.selectbox("Choose content type", ["Text", "Link", "Asset"])
 
 if content_type == "Text":
@@ -17,11 +22,13 @@ if content_type == "Text":
     user_content = st_quill(key="editor", placeholder="Start typing your thoughts here...")
 elif content_type == "Link":
     user_content = st.text_input("Paste a URL (e.g. article, video, social post)")
+    link_notes = st.text_area("Optional Notes", placeholder="Write any personal notes or context about this link.")")
 elif content_type == "Asset":
     uploaded_file = st.file_uploader("Upload a file (PDF, image, doc, audio, etc.)")
     if uploaded_file:
         user_content = uploaded_file.name
         st.info("📁 File uploaded: " + uploaded_file.name)
+        asset_notes = st.text_area("Optional Notes", placeholder="Write any thoughts, context, or observations about this file.")
 
 # Step 4: AI Summary (editable by user)
 summary = st.text_area("AI Summary", placeholder="AI-generated summary will appear here. You can edit it.")
@@ -36,12 +43,16 @@ col1, col2 = st.columns(2)
 with col1:
     if st.button("Generate Preview"):
         st.markdown("---")
-        st.subheader("🔍 Preview")
-        st.markdown(f"**Type**: {content_type}")
-        st.markdown(f"**Folder**: {folder}")
-        st.markdown(f"**Summary**: {summary}")
-        st.markdown(f"**Content**: {user_content}")
-        st.markdown(f"**Tags**: {', '.join(selected_tags)}")
+        st.markdown("""
+        <div style='border: 1px solid #ddd; border-radius: 12px; padding: 1rem; background-color: #fefefe;'>
+            <h4>🔍 Preview</h4>
+            <p><strong>Type:</strong> {content_type}</p>
+            <p><strong>Folder:</strong> {folder}</p>
+            <p><strong>Summary:</strong> {summary}</p>
+            <p><strong>Content:</strong><br>{user_content}</p>
+            <p><strong>Tags:</strong> {' '.join(selected_tags)}</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 with col2:
     if st.button("Save Content"):
