@@ -28,6 +28,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# --- AI Search Bar ---
+with st.container():
+    st.markdown("#### Search your content")
+    search_query = st.text_input("Ask anything, search by topic or content type", placeholder="e.g. Show me dog videos or vegan recipes")
+    if search_query:
+    filtered_items = [item for item in gridded_items if search_query.lower() in item['title'].lower() or search_query.lower() in item['summary'].lower() or any(search_query.lower() in tag.lower() for tag in item['hashtags'])]
+    st.success(f"Found {len(filtered_items)} matching result(s) for: '{search_query}'")
+    gridded_items = filtered_items")
+
 # --- Fake User Info ---
 user_name = "Percy Plum"
 user_avatar_url = "https://e7.pngegg.com/pngimages/687/86/png-clipart-google-logo-google-adwords-g-suite-google-account-google-logo-chess.png"
