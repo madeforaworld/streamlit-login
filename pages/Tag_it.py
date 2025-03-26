@@ -14,7 +14,7 @@ content_type = st.selectbox("Choose content type", ["Text", "Link", "Asset"])
 if content_type == "Text":
     from streamlit_quill import st_quill
     st.markdown("<small style='color: #666;'>Use the editor below for rich content — bullets, bold, headers, and checkboxes supported.</small>", unsafe_allow_html=True)
-    user_content = st_quill(key="editor", theme="snow", placeholder="Start typing your thoughts here...")
+    user_content = st_quill(key="editor", placeholder="Start typing your thoughts here...")
 elif content_type == "Link":
     user_content = st.text_input("Paste a URL (e.g. article, video, social post)")
 elif content_type == "Asset":
