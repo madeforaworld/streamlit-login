@@ -5,6 +5,10 @@ import time
 # Page config
 st.set_page_config(page_title="Login", page_icon="🔐", layout="centered")
 
+# Skip if already logged in
+if "user" in st.session_state:
+    st.switch_page("pages/Main_app.py")
+
 # Custom CSS
 st.markdown("""
     <style>
@@ -116,11 +120,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Check for login token (optional future step)
-query_params = st.query_params
-if "user" in st.session_state:
-    st.switch_page("pages/Main_app.py")
-
 # Layout
 with st.container():
     st.markdown('<div class="login-container">', unsafe_allow_html=True)
@@ -142,20 +141,22 @@ with st.container():
                     st.session_state["user"] = result
                     st.success("Login successful! Redirecting...")
                     time.sleep(1)
-                    st.switch_page("Main_app.py")
+                    st.switch_page("pages/Main_app.py")
         else:
             st.warning("Please enter your email and password.")
 
     st.markdown('<div class="divider">— or —</div>', unsafe_allow_html=True)
 
-    # Google Login via redirect to Firebase hosted page
-    redirect_url = "https://mindtag-ca61c.firebaseapp.com/__/auth/handler?continueUrl=https://app-app-moxethh5kyo8vbmchd5mrs.streamlit.app"
-
-    st.markdown(f"""
-        <a href="{redirect_url}" target="_self">
-            <div class="google-btn">Continue with Google</div>
-        </a>
-    """, unsafe_allow_html=True)
+    # Fake Google login button
+    if st.button("Continue with Google"):
+        st.session_state["user"] = {
+            "email": "fakeuser@gmail.com",
+            "name": "Fake Google User",
+            "provider": "google"
+        }
+        st.success("Fake Google login successful!")
+        time.sleep(1)
+        st.switch_page("pages/Main_app.py")
 
     st.markdown('<div class="footer-text">Don’t have an account? <a href="#">Sign up</a></div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
