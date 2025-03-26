@@ -3,18 +3,24 @@ import streamlit as st
 # Set page config
 st.set_page_config(page_title="Login", page_icon="🔐", layout="centered")
 
-# Custom CSS for UI3 Light Design (Cleaned Up)
+# Custom CSS for UI3 Light Design (Final Cleanup)
 st.markdown("""
     <style>
         html, body, [data-testid="stApp"] {
             background-color: #f5f7fa !important;
+            padding-top: 0 !important;
+        }
+
+        [data-testid="stVerticalBlock"] {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
         }
 
         .login-container {
             max-width: 400px;
-            margin: 5vh auto;
+            margin: 3vh auto 5vh auto;
             background-color: #ffffff;
-            padding: 3rem 2.5rem;
+            padding: 2.5rem 2rem;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
