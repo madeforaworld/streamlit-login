@@ -14,6 +14,17 @@ st.markdown("""
         .block-container {
             background-color: #ffffff;
         }
+        .stButton > button {
+            background-color: #3366FF !important;
+            color: white !important;
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            border: none;
+        }
+        .stButton > button:hover {
+            background-color: #254eda !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -68,28 +79,22 @@ for i, item in enumerate(gridded_items):
         with st.container():
             st.markdown(
                 f"""
-                <div style='border-radius: 16px; background-color: #ffffff; padding: 1rem; margin-bottom: 1rem; border: 1px solid #e2e2e2;'>
-                    <div style='display: flex; justify-content: space-between;'>
-                        <span style='font-size: 1.2rem;'>{item['summary']}</span>
+                <div style='border-radius: 16px; background-color: #ffffff; padding: 1rem; margin-bottom: 1rem; border: 1px solid #e2e2e2; word-wrap: break-word;'>
+                    <div style='display: flex; justify-content: space-between; align-items: center;'>
+                        <div style='font-weight: bold; font-size: 1.1rem;'>{item['title']}</div>
                         <span style='font-size: 1.5rem;'>{item['emoji']}</span>
                     </div>
                     <hr style='border: none; border-top: 1px solid #eee; margin: 0.5rem 0;'>
-                    <strong>{item['title']}</strong><br>
-                    {'<a href="' + item['preview'] + '">' + item['preview'] + '</a>' if item['preview'].startswith('http') else '<em>' + item['preview'] + '</em>'}<br>
-                    <small>{item['type']} – Saved {item['date'].strftime('%b %d')}</small><br>
-                    <div style='margin-top: 0.5rem;'>
-                        {" ".join([f"<span style='background:#f0f0f0;border-radius:8px;padding:2px 6px;margin-right:4px;font-size:0.8rem;'>{tag}</span>" for tag in item['hashtags']])}
+                    <div style='font-size: 0.9rem; color: #444; margin-bottom: 0.25rem;'>Summary</div>
+                    <div style='font-size: 0.95rem; margin-bottom: 0.75rem;'>{item['summary']}</div>
+                    <div>
+                        {'<a href="' + item['preview'] + '" style="word-break: break-word;">' + item['preview'] + '</a>' if item['preview'].startswith('http') else '<em>' + item['preview'] + '</em>'}<br>
+                        <small>{item['type']} – Saved {item['date'].strftime('%b %d')}</small>
+                        <div style='margin-top: 0.5rem;'>
+                            {" ".join([f"<span style='background:#f0f0f0;border-radius:8px;padding:2px 6px;margin-right:4px;font-size:0.8rem;'>{tag}</span>" for tag in item['hashtags']])}
+                        </div>
                     </div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-
-# --- Folder Buttons ---
-st.markdown("### Explore Folders")
-folder_names = ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "Books"]
-folder_cols = st.columns(len(folder_names))
-
-for i, folder in enumerate(folder_names):
-    with folder_cols[i]:
-        st.button(folder, key=f"folder_{i}")
