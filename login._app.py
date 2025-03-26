@@ -1,9 +1,11 @@
 import streamlit as st
+from utils.firebase_auth import sign_in_with_email
+import time
 
-# Set page config
+# Page config
 st.set_page_config(page_title="Login", page_icon="🔐", layout="centered")
 
-# Custom CSS for UI3 Light Design (Final Cleanup)
+# Custom CSS
 st.markdown("""
     <style>
         html, body, [data-testid="stApp"] {
@@ -126,7 +128,15 @@ with st.container():
 
     if st.button("Sign In"):
         if email and password:
-            st.success("Logged in successfully!")
+            with st.spinner("Authenticating..."):
+                result = sign_in_with_email(email, password)
+                if isinstance(result, dict) and "error" in result:
+                    st.error("Login failed: " + result["error"])
+                else:
+                    st.session_state["user"] = result
+                    st.success("Login successful! Redirecting...")
+                    time.sleep(1)
+                    st.switch_page("Main_app.py")
         else:
             st.warning("Please enter your email and password.")
 
