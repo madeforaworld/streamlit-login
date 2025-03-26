@@ -11,8 +11,6 @@ st.markdown("""
 # Step 1: Content Type Dropdown
 folder = st.selectbox("Select Folder", ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "Books"])
 
-if st.button("🧠 Generate AI Summary"):
-    st.info("AI will soon analyze your content and generate a summary here.")
 
 content_type = st.selectbox("Choose content type", ["Text", "Link", "Asset"])
 
@@ -31,6 +29,9 @@ elif content_type == "Asset":
         asset_notes = st.text_area("Optional Notes", placeholder="Write any thoughts, context, or observations about this file.")
 
 # Step 4: AI Summary (editable by user)
+if st.button("🧠 Generate AI Summary"):
+    st.info("AI will soon analyze your content and generate a summary here.")
+
 summary = st.text_area("AI Summary", placeholder="AI-generated summary will appear here. You can edit it.")
 
 # Step 5: AI Tags (editable tag list)
