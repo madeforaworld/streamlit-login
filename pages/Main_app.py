@@ -71,7 +71,11 @@ if st.button("Tag it", use_container_width=True):
 
 # --- AI Search Bar ---
 with st.container():
-    st.markdown("#### Search your content")
+    st.markdown("""
+        <div style='margin-top: 2rem; margin-bottom: 1rem;'>
+            <h4>Search your content</h4>
+        </div>
+    """, unsafe_allow_html=True)
     search_query = st.text_input("Ask anything, search by topic or content type", placeholder="e.g. Show me dog videos or vegan recipes")
     if search_query:
         filtered_items = [item for item in gridded_items if search_query.lower() in item['title'].lower() or search_query.lower() in item['summary'].lower() or any(search_query.lower() in tag.lower() for tag in item['hashtags'])]
