@@ -3,7 +3,7 @@ import streamlit as st
 # Set page config
 st.set_page_config(page_title="Login", page_icon="🔐", layout="centered")
 
-# Custom CSS for UI3 Light Design (Improved)
+# Custom CSS for UI3 Light Design (Updated Header + Style Cleanups)
 st.markdown("""
     <style>
         html, body, [data-testid="stApp"] {
@@ -19,12 +19,19 @@ st.markdown("""
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
 
-        .login-header {
+        .app-title {
             text-align: center;
-            font-size: 1.8rem;
-            font-weight: 600;
+            font-size: 2.2rem;
+            font-weight: 700;
             color: #222;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .app-slogan {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
         }
 
         .stTextInput > div > div > input {
@@ -105,7 +112,8 @@ st.markdown("""
 with st.container():
     st.markdown('<div class="login-container">', unsafe_allow_html=True)
 
-    st.markdown('<div class="login-header">Welcome back 👋</div>', unsafe_allow_html=True)
+    st.markdown('<div class="app-title">MindTag</div>', unsafe_allow_html=True)
+    st.markdown('<div class="app-slogan">Extend your memory.</div>', unsafe_allow_html=True)
 
     email = st.text_input("Email", placeholder="you@example.com")
     password = st.text_input("Password", type="password", placeholder="••••••••")
@@ -123,4 +131,3 @@ with st.container():
     st.markdown('<div class="footer-text">Don’t have an account? <a href="#">Sign up</a></div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
-
