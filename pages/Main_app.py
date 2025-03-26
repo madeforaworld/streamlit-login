@@ -1,6 +1,9 @@
 import streamlit as st
 from datetime import datetime, timedelta
 
+# --- Layout must come first ---
+st.set_page_config(layout="wide", page_title="MindTag Dashboard", page_icon="🧠")
+
 # Apply global light mode style override
 st.markdown("""
     <style>
@@ -32,9 +35,6 @@ fake_items = [
 
 # Filter for past 7 days
 gridded_items = [item for item in fake_items if item["date"] >= datetime.now() - timedelta(days=7)]
-
-# --- Layout ---
-st.set_page_config(layout="wide", page_title="MindTag Dashboard", page_icon="🧠")
 
 with st.container():
     cols = st.columns([0.08, 0.92])
