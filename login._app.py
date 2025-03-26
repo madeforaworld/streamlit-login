@@ -7,7 +7,7 @@ st.set_page_config(page_title="Login", page_icon="🔐", layout="centered")
 
 # Skip if already logged in
 if "user" in st.session_state:
-    st.switch_page("Main_app")
+    st.switch_page("pages/Main_app.py")
 
 # Custom CSS
 st.markdown("""
@@ -118,8 +118,9 @@ st.markdown("""
             text-decoration: underline;
         }
 
-        /* Style for success and error messages */
-        .stAlert-success, .stAlert-error {
+        /* Make alert text dark */
+        [data-testid="stAlert-success"] > div,
+        [data-testid="stAlert-error"] > div {
             color: #111 !important;
         }
     </style>
@@ -146,7 +147,7 @@ with st.container():
                     st.session_state["user"] = result
                     st.success("Login successful! Redirecting...")
                     time.sleep(1)
-                    st.switch_page("Main_app")
+                    st.switch_page("pages/Main_app.py")
         else:
             st.warning("Please enter your email and password.")
 
@@ -161,7 +162,7 @@ with st.container():
         }
         st.success("Fake Google login successful!")
         time.sleep(1)
-        st.switch_page("Main_app")
+        st.switch_page("pages/Main_app.py")
 
     st.markdown('<div class="footer-text">Don’t have an account? <a href="#">Sign up</a></div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
