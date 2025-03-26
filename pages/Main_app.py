@@ -78,9 +78,18 @@ st.markdown("#### Add New Content")
 if st.button("Tag it", use_container_width=True):
     st.info("Redirecting to content creator page... (Not wired yet)")
 
+# --- AI Search Bar ---
+with st.container():
+    st.markdown("#### Search your content")
+    search_query = st.text_input("Ask anything, search by topic or content type", placeholder="e.g. Show me dog videos or vegan recipes")
+    if search_query:
+        filtered_items = [item for item in gridded_items if search_query.lower() in item['title'].lower() or search_query.lower() in item['summary'].lower() or any(search_query.lower() in tag.lower() for tag in item['hashtags'])]
+        st.success(f"Found {len(filtered_items)} matching result(s) for: '{search_query}'")
+        gridded_items = filtered_items
+
 # --- Content Grid Preview ---
 st.markdown("---")
-st.markdown("#### Saved This Week")
+st.markdown("#### Tagged This Week")
 cols = st.columns(3)
 
 for i, item in enumerate(gridded_items):
