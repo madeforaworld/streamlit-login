@@ -10,48 +10,54 @@ st.markdown("""
 
 # Step 1: Content Type Dropdown
 folder_list = ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "Books"]
-folder = st.session_state.get("selected_folder", None)
+selected_folder = st.session_state.get("selected_folder", None)
 
 st.markdown("#### Select Folder")
+
 st.markdown("""
-    <style>
-    .folder-chip {
-        display: inline-block;
-        background-color: #f0f0f0;
-        border-radius: 20px;
-        padding: 6px 14px;
-        margin: 4px 6px 10px 0;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #333;
-        border: 1px solid #ccc;
-        cursor: pointer;
-    }
-    .folder-chip.selected {
-        background-color: #3366FF;
-        color: white;
-        border-color: #3366FF;
-    }
-    </style>
+<style>
+.folder-chip {
+    display: inline-block;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 6px 14px;
+    margin: 4px 6px 4px 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #333;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    text-align: center;
+}
+.folder-chip.selected {
+    background-color: #3366FF;
+    color: white;
+    border-color: #3366FF;
+}
+</style>
 """, unsafe_allow_html=True)
 
-selected_folder = st.session_state.get("selected_folder", None)
-folder_clicked = st.empty()
-new_folder_input = st.empty()
-
-for f in folder_list + ["➕ Create New Folder"]:
-    selected_class = "selected" if f == selected_folder else ""
-    if st.button(f, key=f"folder_{f}"):
-        if f == "➕ Create New Folder":
-            new_folder = st.text_input("Enter new folder name")
-            if new_folder:
-                folder_list.append(new_folder)
-                selected_folder = new_folder
-                st.session_state["selected_folder"] = new_folder
-                st.success(f"✅ New folder '{new_folder}' added!")
-        else:
-            selected_folder = f
+chip_cols = st.columns(len(folder_list) + 1)
+for i, f in enumerate(folder_list):
+    with chip_cols[i]:
+        is_selected = selected_folder == f
+        if st.button(f, key=f"folder_{f}"):
             st.session_state["selected_folder"] = f
+        st.markdown(f"<div class='folder-chip {'selected' if is_selected else ''}'>{f}</div>", unsafe_allow_html=True)
+
+with chip_cols[-1]:
+    if st.button("➕ Create", key="new_folder_btn"):
+        st.session_state["creating_folder"] = True
+
+if st.session_state.get("creating_folder"):
+    new_folder = st.text_input("Enter new folder name", key="new_folder_input")
+    if new_folder:
+        folder_list.append(new_folder)
+        st.session_state["selected_folder"] = new_folder
+        st.session_state["creating_folder"] = False
+        st.success(f"✅ New folder '{new_folder}' added!")
+
+folder = st.session_state.get("selected_folder")
 
 # Fallback if user creates new folder
 folder_query = st.query_params.get("folder")
