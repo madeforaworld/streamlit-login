@@ -1,9 +1,20 @@
 import streamlit as st
+from streamlit_lottie import st_lottie
+import requests
 
 # Set page config
 st.set_page_config(page_title="Login", page_icon="🔐", layout="centered")
 
-# Custom CSS for UI3 Light Design (Updated Header + Style Cleanups)
+# Load Lottie animation (tag + AI style)
+def load_lottie_url(url):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
+
+lottie_tag = load_lottie_url("https://assets1.lottiefiles.com/packages/lf20_nzpkqlqn.json")  # Clean tag animation
+
+# Custom CSS for UI3 Light Design (with animation)
 st.markdown("""
     <style>
         html, body, [data-testid="stApp"] {
@@ -111,6 +122,9 @@ st.markdown("""
 # Layout
 with st.container():
     st.markdown('<div class="login-container">', unsafe_allow_html=True)
+
+    with st.container():
+        st_lottie(lottie_tag, height=120, key="tag-lottie")
 
     st.markdown('<div class="app-title">MindTag</div>', unsafe_allow_html=True)
     st.markdown('<div class="app-slogan">Extend your memory.</div>', unsafe_allow_html=True)
