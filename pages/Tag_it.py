@@ -9,7 +9,15 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Step 1: Content Type Dropdown
-folder = st.selectbox("Select Folder", ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "Books"])
+folder_list = ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "Books"]
+folder = st.selectbox("Select Folder", folder_list + ["➕ Create New Folder"])
+
+if folder == "➕ Create New Folder":
+    new_folder = st.text_input("Enter new folder name")
+    if new_folder:
+        folder_list.append(new_folder)
+        folder = new_folder
+        st.success(f"✅ New folder '{new_folder}' added!")
 
 
 content_type = st.selectbox("Choose content type", ["Text", "Link", "Asset"])
