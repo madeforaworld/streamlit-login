@@ -12,20 +12,9 @@ st.markdown("""
 content_type = st.selectbox("Choose content type", ["Text", "Link", "Asset"])
 
 if content_type == "Text":
-    st.markdown("<small style='color: #666;'>Use this for notes, todos, or writing anything freeform. Great for thoughts, ideas, and planning.</small>", unsafe_allow_html=True)
-elif content_type == "Link":
-    st.markdown("<small style='color: #666;'>Paste any URL — news articles, social media, YouTube videos, etc. MindTag will extract metadata and summarize it.</small>", unsafe_allow_html=True)
-elif content_type == "Asset":
-    st.markdown("<small style='color: #666;'>Upload a file such as an image, PDF, voice note, video, or .doc. AI will process and tag it accordingly.</small>", unsafe_allow_html=True)
-
-# Step 2: Folder Dropdown (from existing folders)
-folder = st.selectbox("Choose a folder to save this in", ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "Books"])
-
-# Step 3: Dynamic Content Input
-user_content = ""
-if content_type == "Text":
-    st.markdown("<small style='color: #666;'>Use rich text formatting for notes, checklists, and more.</small>", unsafe_allow_html=True)
-    user_content = st.text_area("Write your content or notes", height=200, placeholder="Use markdown: **bold**, - bullet, 1. numbered, [x] checkbox")
+    from streamlit_quill import st_quill
+    st.markdown("<small style='color: #666;'>Use the editor below for rich content — bullets, bold, headers, and checkboxes supported.</small>", unsafe_allow_html=True)
+    user_content = st_quill(key="editor", theme="snow", placeholder="Start typing your thoughts here...")
 elif content_type == "Link":
     user_content = st.text_input("Paste a URL (e.g. article, video, social post)")
 elif content_type == "Asset":
