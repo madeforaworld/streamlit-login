@@ -24,13 +24,11 @@ folder = st.selectbox("Choose a folder to save this in", ["News Articles", "Reci
 # Step 3: Dynamic Content Input
 user_content = ""
 if content_type == "Text":
-    user_content = st.markdown("""
-<small style='color: #666;'>Use rich text formatting for notes, checklists, and more.</small>
-""", unsafe_allow_html=True)
-user_content = st.text_area("Write your content or notes", height=200, placeholder="Use markdown: **bold**, - bullet, 1. numbered, [x] checkbox")
+    st.markdown("<small style='color: #666;'>Use rich text formatting for notes, checklists, and more.</small>", unsafe_allow_html=True)
+    user_content = st.text_area("Write your content or notes", height=200, placeholder="Use markdown: **bold**, - bullet, 1. numbered, [x] checkbox")
 elif content_type == "Link":
     user_content = st.text_input("Paste a URL (e.g. article, video, social post)")
-elif content_type == "Document":
+elif content_type == "Asset":
     uploaded_file = st.file_uploader("Upload a file (PDF, image, doc, audio, etc.)")
     if uploaded_file:
         user_content = uploaded_file.name
