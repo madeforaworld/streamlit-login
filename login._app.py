@@ -142,7 +142,12 @@ with st.container():
 
     st.markdown('<div class="divider">— or —</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="google-btn">Continue with Google</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <a href="https://mindtag-ca61c.firebaseapp.com/__/auth/handler" target="_blank">
+        <div class="google-btn">Continue with Google</div>
+    </a>
+""", unsafe_allow_html=True)
+
 
     st.markdown('<div class="footer-text">Don’t have an account? <a href="#">Sign up</a></div>', unsafe_allow_html=True)
 
