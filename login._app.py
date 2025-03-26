@@ -5,6 +5,15 @@ import time
 # Page config
 st.set_page_config(page_title="Login", page_icon="🔐", layout="centered")
 
+# Check for Google login redirect (future use)
+query_params = st.query_params
+
+if "id_token" in query_params:
+    st.session_state["user"] = {"token": query_params["id_token"]}
+    st.success("Logged in via Google!")
+    time.sleep(1)
+    st.switch_page("Main_app.py")
+
 # Custom CSS
 st.markdown("""
     <style>
@@ -142,12 +151,14 @@ with st.container():
 
     st.markdown('<div class="divider">— or —</div>', unsafe_allow_html=True)
 
-    st.markdown("""
-    <a href="https://mindtag-ca61c.firebaseapp.com/__/auth/handler" target="_blank">
-        <div class="google-btn">Continue with Google</div>
-    </a>
-""", unsafe_allow_html=True)
+    # Firebase Hosted Google Login URL (with redirect back to your app)
+    redirect_url = "https://mindtag-ca61c.firebaseapp.com/__/auth/handler?continueUrl=https://app-app-moxethh5kyo8vbmchd5mrs.streamlit.app"
 
+    st.markdown(f"""
+        <a href="{redirect_url}" target="_self">
+            <div class="google-btn">Continue with Google</div>
+        </a>
+    """, unsafe_allow_html=True)
 
     st.markdown('<div class="footer-text">Don’t have an account? <a href="#">Sign up</a></div>', unsafe_allow_html=True)
 
