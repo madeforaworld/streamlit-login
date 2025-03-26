@@ -22,7 +22,7 @@ if content_type == "Text":
     user_content = st_quill(key="editor", placeholder="Start typing your thoughts here...")
 elif content_type == "Link":
     user_content = st.text_input("Paste a URL (e.g. article, video, social post)")
-    link_notes = st.text_area("Optional Notes", placeholder="Write any personal notes or context about this link.")")
+    link_notes = st.text_area("Optional Notes", placeholder="Write any personal notes or context about this link.")
 elif content_type == "Asset":
     uploaded_file = st.file_uploader("Upload a file (PDF, image, doc, audio, etc.)")
     if uploaded_file:
