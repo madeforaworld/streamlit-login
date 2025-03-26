@@ -21,3 +21,4 @@ def sign_up_with_email(email, password):
     except Exception as e:
         print("Signup error:", e)
         return None
+
