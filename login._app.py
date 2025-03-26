@@ -3,9 +3,14 @@ import streamlit as st
 # Page setup
 st.set_page_config(page_title="Login", page_icon="🔐", layout="centered")
 
-# Custom CSS to style UI3 vibes
+# Custom CSS to style UI3 vibes + light background
 st.markdown("""
     <style>
+        /* Set a light background for the whole page */
+        html, body, [data-testid="stApp"] {
+            background-color: #f4f6f8 !important;
+        }
+
         .login-card {
             background-color: white;
             padding: 3rem 2rem;
@@ -15,23 +20,27 @@ st.markdown("""
             max-width: 400px;
             margin: auto;
         }
+
         .login-header {
             font-size: 1.8rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
             text-align: center;
         }
+
         .login-footer {
             text-align: center;
             margin-top: 1rem;
             font-size: 0.9rem;
             color: #888;
         }
+
         .or-divider {
             text-align: center;
             margin: 1rem 0;
             color: #999;
         }
+
         .google-btn {
             background-color: #fff;
             border: 1px solid #ccc;
@@ -67,3 +76,4 @@ with st.container():
     st.markdown('<div class="login-footer">Don’t have an account? <a href="#">Sign up</a></div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
+
