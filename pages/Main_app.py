@@ -115,8 +115,25 @@ for i, item in enumerate(gridded_items):
 # --- Folder Buttons ---
 st.markdown("### Explore Folders")
 folder_names = ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "Books"]
-folder_cols = st.columns(len(folder_names))
-
-for i, folder in enumerate(folder_names):
-    with folder_cols[i]:
-        st.button(folder, key=f"folder_{i}")
+folder_style = """
+    <style>
+    .folder-chip {
+        display: inline-block;
+        background-color: #eef1f8;
+        border: 1px solid #ccd6eb;
+        border-radius: 20px;
+        padding: 6px 14px;
+        margin: 6px 8px 6px 0;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #334;
+        cursor: pointer;
+    }
+    .folder-chip:hover {
+        background-color: #dbe5f5;
+        transition: 0.2s ease;
+    }
+    </style>
+"""
+st.markdown(folder_style, unsafe_allow_html=True)
+st.markdown("<div>" + "".join([f"<span class='folder-chip'>{name}</span>" for name in folder_names]) + "</div>", unsafe_allow_html=True)
