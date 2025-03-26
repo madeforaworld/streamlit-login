@@ -1,19 +1,9 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from utils.firebase_auth import sign_in_with_email
 import time
 
 # Page config
 st.set_page_config(page_title="Login", page_icon="🔐", layout="centered")
-
-# Handle token from JS (Google login)
-if "user" not in st.session_state:
-    st.session_state["user"] = None
-
-if st.session_state["user"]:
-    st.success("Logged in successfully!")
-    time.sleep(1)
-    st.switch_page("Main_app.py")
 
 # Custom CSS
 st.markdown("""
@@ -91,6 +81,22 @@ st.markdown("""
             color: #999;
         }
 
+        .google-btn {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 0.75rem;
+            text-align: center;
+            color: #444;
+            cursor: pointer;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .google-btn:hover {
+            background-color: #f1f1f1;
+        }
+
         .footer-text {
             text-align: center;
             font-size: 0.9rem;
@@ -110,6 +116,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Check for login token (optional future step)
+query_params = st.query_params
+if "user" in st.session_state:
+    st.switch_page("Main_app.py")
+
 # Layout
 with st.container():
     st.markdown('<div class="login-container">', unsafe_allow_html=True)
@@ -117,92 +128,10 @@ with st.container():
     st.markdown('<div class="app-title">MindTag</div>', unsafe_allow_html=True)
     st.markdown('<div class="app-slogan">Extend your memory.</div>', unsafe_allow_html=True)
 
+    # Email login
     email = st.text_input("Email", placeholder="you@example.com")
     password = st.text_input("Password", type="password", placeholder="••••••••")
 
     if st.button("Sign In"):
         if email and password:
-            with st.spinner("Authenticating..."):
-                result = sign_in_with_email(email, password)
-                if isinstance(result, dict) and "error" in result:
-                    st.error("Login failed: " + result["error"])
-                else:
-                    st.session_state["user"] = result
-                    st.success("Login successful! Redirecting...")
-                    time.sleep(1)
-                    st.switch_page("Main_app.py")
-        else:
-            st.warning("Please enter your email and password.")
-
-    st.markdown('<div class="divider">— or —</div>', unsafe_allow_html=True)
-
-    # Google Sign-In via Embedded JS
-    components.html(
-        """
-        <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-
-        <div id="google-btn" style="
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            padding: 0.75rem;
-            text-align: center;
-            color: #444;
-            cursor: pointer;
-            font-weight: 500;
-            margin-bottom: 1rem;
-            width: 100%;
-        ">Continue with Google</div>
-
-        <script>
-            const firebaseConfig = {
-              apiKey: "AIzaSyDb-7VXzQb86XIJH-Q5Wlgf9ccNMMD3WCg",
-              authDomain: "mindtag-ca61c.firebaseapp.com",
-              projectId: "mindtag-ca61c",
-              storageBucket: "mindtag-ca61c.appspot.com",
-              messagingSenderId: "560275791939",
-              appId: "1:560275791939:web:adea6051b949c3a3d474f6",
-              measurementId: "G-BBL9E1DVQC"
-            };
-
-            firebase.initializeApp(firebaseConfig);
-
-            const auth = firebase.auth();
-            const provider = new firebase.auth.GoogleAuthProvider();
-
-            document.getElementById("google-btn").onclick = function() {
-                auth.signInWithPopup(provider)
-                    .then((result) => {
-                        const user = result.user;
-                        const data = {
-                            email: user.email,
-                            name: user.displayName,
-                            photo: user.photoURL,
-                            uid: user.uid,
-                            token: user.accessToken
-                        };
-                        window.parent.postMessage({ type: 'streamlit:setComponentValue', value: data }, '*');
-                    })
-                    .catch((error) => {
-                        alert("Login failed: " + error.message);
-                    });
-            };
-        </script>
-        """,
-        height=100,
-    )
-
-    st.markdown('<div class="footer-text">Don’t have an account? <a href="#">Sign up</a></div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# Listen for Google login result from JS
-message = st.experimental_get_query_params()
-if "_streamlit_component_value" in message:
-    try:
-        import json
-        user = json.loads(message["_streamlit_component_value"][0])
-        st.session_state["user"] = user
-        st.rerun()
-    except Exception as e:
-        st.error("Failed to parse Google login data.")
+            with st.spinner("
