@@ -46,16 +46,19 @@ for i, f in enumerate(folder_list):
         st.markdown(f"<div class='folder-chip {'selected' if is_selected else ''}'>{f}</div>", unsafe_allow_html=True)
 
 with chip_cols[-1]:
-    if st.button("➕ Create", key="new_folder_btn"):
-        st.session_state["creating_folder"] = True
-
-if st.session_state.get("creating_folder"):
-    new_folder = st.text_input("Enter new folder name", key="new_folder_input")
-    if new_folder:
-        folder_list.append(new_folder)
-        st.session_state["selected_folder"] = new_folder
+    if "creating_folder" not in st.session_state:
         st.session_state["creating_folder"] = False
-        st.success(f"✅ New folder '{new_folder}' added!")
+
+    if st.session_state["creating_folder"]:
+        new_folder = st.text_input("Enter new folder name", key="new_folder_input")
+        if new_folder:
+            folder_list.append(new_folder)
+            st.session_state["selected_folder"] = new_folder
+            st.session_state["creating_folder"] = False
+            st.success(f"✅ New folder '{new_folder}' added!")
+    else:
+        if st.button("➕ Create", key="new_folder_btn"):
+            st.session_state["creating_folder"] = True
 
 folder = st.session_state.get("selected_folder")
 
