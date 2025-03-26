@@ -7,25 +7,25 @@ st.set_page_config(layout="wide", page_title="MindTag Dashboard", page_icon="ðŸ§
 # Apply global light mode style override
 st.markdown("""
     <style>
-        html, body, [data-testid="stApp"] {
-            background-color: #f9fafb;
-            color: #111;
-        }
-        .block-container {
-            background-color: #ffffff;
-        }
-        .stButton > button {
-            background-color: #3366FF !important;
-            color: white !important;
-            border-radius: 12px;
-            padding: 0.5rem 1rem;
-            font-weight: 600;
-            border: none;
-        }
-        .stButton > button:hover {
-            background-color: #254eda !important;
-        }
-    </style>
+    html, body, [data-testid="stApp"] {
+        background-color: #f9fafb !important;
+        color: #111 !important;
+    }
+    .block-container {
+        background-color: #ffffff !important;
+    }
+    .stButton > button {
+        background-color: #3366FF !important;
+        color: white !important;
+        border-radius: 12px;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        border: none;
+    }
+    .stButton > button:hover {
+        background-color: #254eda !important;
+    }
+</style>
 """, unsafe_allow_html=True)
 
 
