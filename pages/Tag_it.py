@@ -10,13 +10,29 @@ st.markdown("""
 
 # Step 1: Content Type Dropdown
 folder_list = ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "Books"]
-folder = st.selectbox("Select Folder", folder_list + ["➕ Create New Folder"])
+folder = st.session_state.get("selected_folder", None)
+
+st.markdown("#### Select Folder")
+folder_cols = st.columns(len(folder_list))
+for i, f in enumerate(folder_list):
+    with folder_cols[i]:
+        if st.button(f, key=f"folder_{i}"):
+            st.session_state["selected_folder"] = f
+            folder = f
+
+st.markdown("<small style='color:#999;'>Click a folder above or create a new one below.</small>", unsafe_allow_html=True)
+
+# Auto-select folder if content type is Link
+if folder is None and 'Link' in st.session_state.get("content_type", ""):
+    folder = "News Articles"
+    st.session_state["selected_folder"] = folder
 
 if folder == "➕ Create New Folder":
     new_folder = st.text_input("Enter new folder name")
     if new_folder:
         folder_list.append(new_folder)
         folder = new_folder
+        st.session_state["selected_folder"] = new_folder
         st.success(f"✅ New folder '{new_folder}' added!")
 
 
