@@ -134,4 +134,28 @@ with st.container():
 
     if st.button("Sign In"):
         if email and password:
-            with st.spinner("
+            with st.spinner("Authenticating..."):
+                result = sign_in_with_email(email, password)
+                if isinstance(result, dict) and "error" in result:
+                    st.error("Login failed: " + result["error"])
+                else:
+                    st.session_state["user"] = result
+                    st.success("Login successful! Redirecting...")
+                    time.sleep(1)
+                    st.switch_page("Main_app.py")
+        else:
+            st.warning("Please enter your email and password.")
+
+    st.markdown('<div class="divider">— or —</div>', unsafe_allow_html=True)
+
+    # Google Login via redirect to Firebase hosted page
+    redirect_url = "https://mindtag-ca61c.firebaseapp.com/__/auth/handler?continueUrl=https://app-app-moxethh5kyo8vbmchd5mrs.streamlit.app"
+
+    st.markdown(f"""
+        <a href="{redirect_url}" target="_self">
+            <div class="google-btn">Continue with Google</div>
+        </a>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="footer-text">Don’t have an account? <a href="#">Sign up</a></div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
