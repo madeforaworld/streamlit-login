@@ -39,12 +39,19 @@ selected_folder = st.session_state.get("selected_folder", None)
 folder_clicked = st.empty()
 new_folder_input = st.empty()
 
-chip_container = ""
 for f in folder_list + ["➕ Create New Folder"]:
     selected_class = "selected" if f == selected_folder else ""
-    chip_container += f"<span class='folder-chip {selected_class}' onclick=\"window.location.search += '&folder={f}'\">{f}</span>"
-
-folder_clicked.markdown(chip_container, unsafe_allow_html=True)
+    if st.button(f, key=f"folder_{f}"):
+        if f == "➕ Create New Folder":
+            new_folder = st.text_input("Enter new folder name")
+            if new_folder:
+                folder_list.append(new_folder)
+                selected_folder = new_folder
+                st.session_state["selected_folder"] = new_folder
+                st.success(f"✅ New folder '{new_folder}' added!")
+        else:
+            selected_folder = f
+            st.session_state["selected_folder"] = f
 
 # Fallback if user creates new folder
 folder_query = st.query_params.get("folder")
