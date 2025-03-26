@@ -98,3 +98,12 @@ for i, item in enumerate(gridded_items):
                 """,
                 unsafe_allow_html=True
             )
+
+# --- Folder Buttons ---
+st.markdown("### Explore Folders")
+folder_names = ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "Books"]
+folder_cols = st.columns(len(folder_names))
+
+for i, folder in enumerate(folder_names):
+    with folder_cols[i]:
+        st.button(folder, key=f"folder_{i}")
