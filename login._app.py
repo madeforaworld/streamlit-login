@@ -119,7 +119,7 @@ st.markdown("""
 # Check for login token (optional future step)
 query_params = st.query_params
 if "user" in st.session_state:
-    st.switch_page("Main_app.py")
+    st.switch_page("pages/Main_app.py")
 
 # Layout
 with st.container():
