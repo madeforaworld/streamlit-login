@@ -13,12 +13,51 @@ folder_list = ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "
 folder = st.session_state.get("selected_folder", None)
 
 st.markdown("#### Select Folder")
-folder_cols = st.columns(len(folder_list))
-for i, f in enumerate(folder_list):
-    with folder_cols[i]:
-        if st.button(f, key=f"folder_{i}"):
-            st.session_state["selected_folder"] = f
-            folder = f
+st.markdown("""
+    <style>
+    .folder-chip {
+        display: inline-block;
+        background-color: #f0f0f0;
+        border-radius: 20px;
+        padding: 6px 14px;
+        margin: 4px 6px 10px 0;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #333;
+        border: 1px solid #ccc;
+        cursor: pointer;
+    }
+    .folder-chip.selected {
+        background-color: #3366FF;
+        color: white;
+        border-color: #3366FF;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+selected_folder = st.session_state.get("selected_folder", None)
+folder_clicked = st.empty()
+new_folder_input = st.empty()
+
+chip_container = ""
+for f in folder_list + ["➕ Create New Folder"]:
+    selected_class = "selected" if f == selected_folder else ""
+    chip_container += f"<span class='folder-chip {selected_class}' onclick=\"window.location.search += '&folder={f}'\">{f}</span>"
+
+folder_clicked.markdown(chip_container, unsafe_allow_html=True)
+
+# Fallback if user creates new folder
+folder_query = st.query_params.get("folder")
+if folder_query:
+    st.session_state["selected_folder"] = folder_query
+    if folder_query == "➕ Create New Folder":
+        new_name = new_folder_input.text_input("Enter new folder name")
+        if new_name:
+            folder_list.append(new_name)
+            st.session_state["selected_folder"] = new_name
+            st.success(f"✅ New folder '{new_name}' added!")
+
+folder = st.session_state.get("selected_folder")
 
 st.markdown("<small style='color:#999;'>Click a folder above or create a new one below.</small>", unsafe_allow_html=True)
 
