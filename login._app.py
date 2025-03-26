@@ -3,7 +3,7 @@ import streamlit as st
 # Set page config
 st.set_page_config(page_title="Login", page_icon="🔐", layout="centered")
 
-# Custom CSS for UI3 Light Design
+# Custom CSS for UI3 Light Design (Improved)
 st.markdown("""
     <style>
         html, body, [data-testid="stApp"] {
@@ -28,27 +28,36 @@ st.markdown("""
         }
 
         .stTextInput > div > div > input {
-            background-color: #f9fafb;
+            background-color: #f9fafb !important;
             padding: 0.75rem;
             border-radius: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #ddd !important;
             color: #111;
+            box-shadow: none !important;
+            outline: none !important;
+            filter: none !important;
+            transition: border 0.2s ease-in-out;
+        }
+
+        .stTextInput > div > div > input:focus {
+            border: 1px solid #3366FF !important;
         }
 
         .stButton > button {
-            background-color: #3366FF;
-            color: white;
+            background-color: #3366FF !important;
+            color: white !important;
             padding: 0.75rem 1.5rem;
             border: none;
             border-radius: 12px;
             font-weight: 600;
             width: 100%;
             margin-top: 1rem;
-            transition: 0.3s ease;
+            transition: background-color 0.3s ease;
+            box-shadow: none !important;
         }
 
         .stButton > button:hover {
-            background-color: #254eda;
+            background-color: #254eda !important;
         }
 
         .divider {
@@ -67,6 +76,10 @@ st.markdown("""
             cursor: pointer;
             font-weight: 500;
             margin-bottom: 1rem;
+        }
+
+        .google-btn:hover {
+            background-color: #f1f1f1;
         }
 
         .footer-text {
@@ -110,3 +123,4 @@ with st.container():
     st.markdown('<div class="footer-text">Don’t have an account? <a href="#">Sign up</a></div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
+
