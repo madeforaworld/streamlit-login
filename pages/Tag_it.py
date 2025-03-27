@@ -103,12 +103,14 @@ def extract_text_from_link(url):
         if not paragraphs:
             return None
         return "\n\n".join([p.get_text() for p in paragraphs]).strip()
-    except Exception as e:
+    except Exception:
         return None
 
 def parse_summary_and_tags(raw_output):
-    tags = re.findall(r"#\w+", raw_output)
-    clean_summary = re.sub(r"#\w+", '', raw_output).strip()
+    lines = raw_output.strip().splitlines()
+    tag_line = lines[-1] if ',' in lines[-1] else ''
+    tags = [f"#{t.strip().replace(' ', '_')}" for t in tag_line.split(',') if t.strip()]
+    clean_summary = "\n".join(lines[:-1]).strip()
     return clean_summary, tags
 
 # -------------------------------
@@ -125,16 +127,19 @@ def generate_summary(text, folder):
 - Prep/cook time
 - Short description of the dish
 
+At the end, list 3–5 tags for this recipe, comma-separated.
+
 Recipe:
 {text}
 """
     elif folder == "News Articles":
-        prompt = f"""Summarize the following news article in 4–5 bullet points. Include:
+        prompt = f"""Summarize the following news article in bullet points. Include:
 - What happened
 - When and where it happened
 - Who is involved
 - Key facts or stats
-- Topic and entities if possible
+
+At the end, list 3–5 relevant tags, comma-separated.
 
 Article:
 {text}
@@ -146,15 +151,18 @@ Article:
 - Type of book (e.g. fiction, memoir)
 - Key takeaway or message
 
+At the end, list 3–5 relevant tags, comma-separated.
+
 Book:
 {text}
 """
     else:
-        prompt = f"""Summarize this personal note or text. Include:
+        prompt = f"""Summarize this personal note or content. Include:
 - What it's about
-- Any key actions, plans, or ideas
-- Tone or purpose (todo, reflection, brainstorm)
-- 2–3 suggested tags (as hashtags at the end)
+- Key actions or ideas
+- Purpose or tone (todo, brainstorm, etc.)
+
+At the end, list 3–5 relevant tags, comma-separated.
 
 Note:
 {text}
@@ -207,7 +215,7 @@ summary = st.text_area("AI Summary", value=st.session_state.get("ai_summary", ""
 st.markdown("##### Suggested Tags")
 existing_tags = ["#AI", "#mindtag", "#note", "#video", "#inspiration"]
 default_tags = st.session_state.get("ai_tags", ["#mindtag"])
-selected_tags = st.multiselect("AI-generated tags (you can add or remove)", options=existing_tags + default_tags, default=default_tags)
+selected_tags = st.multiselect("AI-generated tags (you can add or remove)", options=list(set(existing_tags + default_tags)), default=default_tags)
 
 # -------------------------------
 # Preview + Save
@@ -222,10 +230,18 @@ with col1:
             <h4>🔍 Preview</h4>
             <p><strong>Type:</strong> {content_type}</p>
             <p><strong>Folder:</strong> {folder}</p>
-            <p><strong>Summary:</strong> {summary}</p>
+            <p><strong>Summary:</strong></p>
+        </div>
+        """, unsafe_allow_html=True)
+        st.markdown(summary)  # Render Markdown summary
+        st.markdown(f"""
+        <div style='margin-top: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 0.5rem; background: #fafafa;'>
             <p><strong>Content:</strong><br>{user_content}</p>
             <p><strong>Text:</strong><br>{text_content}</p>
-            <p><strong>Tags:</strong> {' '.join(selected_tags)}</p>
+            <p><strong>Tags:</strong></p>
+            <div style='margin: 6px 0 0;'>
+                {"".join([f"<span style='display:inline-block; background:#eef; color:#224; border-radius:12px; padding:4px 10px; margin:3px; font-size:0.85rem;'>🏷️ {tag}</span>" for tag in selected_tags])}
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
