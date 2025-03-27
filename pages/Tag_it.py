@@ -2,8 +2,12 @@ import streamlit as st
 from datetime import datetime
 from streamlit_quill import st_quill
 from openai import OpenAI
+from newspaper import Article
+from bs4 import BeautifulSoup
+import requests
+import re
 
-# ✅ Secure OpenAI client
+# Secure OpenAI client (v1.x)
 client = OpenAI(api_key=st.secrets["openai_key"])
 
 # -------------------------------
@@ -77,7 +81,7 @@ if content_type == "Text":
     user_content = text_content
 
 elif content_type == "Link":
-    user_content = st.text_input("Paste a URL (e.g. article, video, social post)")
+    user_content = st.text_input("Paste a URL (e.g. article, video, recipe)")
     st.markdown("##### Text")
     text_content = st_quill(key="editor_link", placeholder="Write any personal notes or context about this link.")
 
@@ -90,7 +94,30 @@ elif content_type == "Asset":
     text_content = st_quill(key="editor_asset", placeholder="Write any thoughts, context, or observations about this file.")
 
 # -------------------------------
-# Generate AI Summary with OpenAI (v1.x)
+# Helpers: Scrape + Parse
+# -------------------------------
+def extract_text_from_link(url):
+    try:
+        article = Article(url)
+        article.download()
+        article.parse()
+        return article.text.strip()
+    except:
+        try:
+            response = requests.get(url, timeout=5)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            paragraphs = soup.find_all('p')
+            return "\n".join([p.get_text() for p in paragraphs]).strip()
+        except:
+            return None
+
+def parse_summary_and_tags(raw_output):
+    tags = re.findall(r"#\w+", raw_output)
+    clean_summary = re.sub(r"#\w+", '', raw_output).strip()
+    return clean_summary, tags
+
+# -------------------------------
+# OpenAI Summarizer
 # -------------------------------
 def generate_summary(text, folder):
     if not text.strip():
@@ -132,13 +159,12 @@ Book:
 - What it's about
 - Any key actions, plans, or ideas
 - Tone or purpose (todo, reflection, brainstorm)
-- 2–3 suggested tags
+- 2–3 suggested tags (as hashtags at the end)
 
 Note:
 {text}
 """
 
-    # 🔥 OpenAI v1.x call
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -149,19 +175,31 @@ Note:
     return response.choices[0].message.content
 
 # -------------------------------
-# Summary Button
+# Generate AI Summary
 # -------------------------------
 if st.button("🧠 Generate AI Summary"):
-    if text_content:
+    if content_type == "Link":
+        article_text = extract_text_from_link(user_content)
+        if article_text:
+            text_to_summarize = article_text
+        else:
+            st.warning("Could not extract content from link. Using fallback notes.")
+            text_to_summarize = text_content
+    else:
+        text_to_summarize = text_content
+
+    if text_to_summarize:
         with st.spinner("Generating summary with OpenAI..."):
             try:
-                summary_result = generate_summary(text_content, folder)
-                st.session_state["ai_summary"] = summary_result
+                summary_result = generate_summary(text_to_summarize, folder)
+                clean_summary, extracted_tags = parse_summary_and_tags(summary_result)
+                st.session_state["ai_summary"] = clean_summary
+                st.session_state["ai_tags"] = extracted_tags
                 st.success("✅ Summary generated!")
             except Exception as e:
                 st.error(f"Error: {e}")
     else:
-        st.warning("Please enter text first.")
+        st.warning("Please enter content or notes to summarize.")
 
 # -------------------------------
 # Summary Box
@@ -173,7 +211,8 @@ summary = st.text_area("AI Summary", value=st.session_state.get("ai_summary", ""
 # -------------------------------
 st.markdown("##### Suggested Tags")
 existing_tags = ["#AI", "#mindtag", "#note", "#video", "#inspiration"]
-selected_tags = st.multiselect("AI-generated tags (you can add or remove)", options=existing_tags, default=["#mindtag"])
+default_tags = st.session_state.get("ai_tags", ["#mindtag"])
+selected_tags = st.multiselect("AI-generated tags (you can add or remove)", options=existing_tags + default_tags, default=default_tags)
 
 # -------------------------------
 # Preview + Save
