@@ -8,15 +8,14 @@ st.markdown("""
     <p style='color: #555;'>Create a new content item. Content type determines how it's processed by AI.</p>
 """, unsafe_allow_html=True)
 
-# Folder setup
-folder_list = ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "Books"]
-selected_folder = st.session_state.get("selected_folder")
-creating_folder = st.session_state.get("creating_folder", False)
+# -------------------------
+# Folder Selection Section
+# -------------------------
 
 st.markdown("#### Select Folder")
 st.markdown("<small style='color:#999;'>Click a folder below or create a new one.</small>", unsafe_allow_html=True)
 
-# Folder chip style
+# Folder chip styling
 st.markdown("""
 <style>
 .folder-chip {
@@ -33,52 +32,72 @@ st.markdown("""
     text-align: center;
 }
 .folder-chip.selected {
-    background-color: #3366FF;
-    color: white;
-    border-color: #3366FF;
+    background-color: #3366FF !important;
+    color: white !important;
+    border-color: #3366FF !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# Folder selection and creation
-folder_cols = st.columns(len(folder_list) + 1)
-for i, f in enumerate(folder_list):
-    with folder_cols[i]:
-        if st.button(f, key=f"folder_{f}"):
-            st.session_state["selected_folder"] = f
-        chip_class = "selected" if st.session_state.get("selected_folder") == f else ""
-        st.markdown(f"<div class='folder-chip {chip_class}'>{f}</div>", unsafe_allow_html=True)
+# Folder state setup
+if "folder_list" not in st.session_state:
+    st.session_state.folder_list = ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "Books"]
+if "selected_folder" not in st.session_state:
+    st.session_state.selected_folder = None
+if "creating_folder" not in st.session_state:
+    st.session_state.creating_folder = False
 
-with folder_cols[-1]:
-    if st.button("➕ Create", key="folder_create"):
-        st.session_state["creating_folder"] = True
+# Render folder chips and create button
+folder_area = st.container()
+with folder_area:
+    cols = st.columns(len(st.session_state.folder_list) + 1)
+    for i, f in enumerate(st.session_state.folder_list):
+        with cols[i]:
+            chip_class = "folder-chip selected" if st.session_state.selected_folder == f else "folder-chip"
+            if st.button(f, key=f"folder_{f}"):
+                st.session_state.selected_folder = f
+            st.markdown(f"<div class='{chip_class}'>{f}</div>", unsafe_allow_html=True)
 
-if creating_folder:
-    new_folder = st.text_input("Name your new folder:", key="new_folder_input")
-    if new_folder:
-        folder_list.append(new_folder)
-        st.session_state["selected_folder"] = new_folder
-        st.session_state["creating_folder"] = False
-        st.success(f"✅ Folder '{new_folder}' created and selected.")
+    # "Create" chip
+    with cols[-1]:
+        if not st.session_state.creating_folder:
+            if st.button("➕ Create", key="create_folder_btn"):
+                st.session_state.creating_folder = True
+        else:
+            new_folder = st.text_input("New folder name", key="new_folder_input")
+            if new_folder:
+                st.session_state.folder_list.append(new_folder)
+                st.session_state.selected_folder = new_folder
+                st.session_state.creating_folder = False
+                st.success(f"✅ Folder '{new_folder}' created and selected.")
 
-folder = st.session_state.get("selected_folder")
+folder = st.session_state.selected_folder
 
-# Auto-select folder if content type is Link
-if folder is None and 'Link' in st.session_state.get("content_type", ""):
-    folder = "News Articles"
-    st.session_state["selected_folder"] = folder
+# -------------------------
+# Content Type Selection
+# -------------------------
 
-# Content type selection
 content_type = st.selectbox("Choose content type", ["Text", "Link", "Asset"])
+st.session_state["content_type"] = content_type
 
-# Dynamic input area
+# Auto-select default folder for link
+if folder is None and content_type == "Link":
+    folder = "News Articles"
+    st.session_state.selected_folder = folder
+
+# -------------------------
+# Content Input Area
+# -------------------------
+
 if content_type == "Text":
     from streamlit_quill import st_quill
     st.markdown("<small style='color: #666;'>Use the editor below for rich content — bullets, bold, headers, and checkboxes supported.</small>", unsafe_allow_html=True)
     user_content = st_quill(key="editor", placeholder="Start typing your thoughts here...")
+
 elif content_type == "Link":
     user_content = st.text_input("Paste a URL (e.g. article, video, social post)")
     link_notes = st.text_area("Optional Notes", placeholder="Write any personal notes or context about this link.")
+
 elif content_type == "Asset":
     uploaded_file = st.file_uploader("Upload a file (PDF, image, doc, audio, etc.)")
     if uploaded_file:
@@ -86,18 +105,23 @@ elif content_type == "Asset":
         st.info("📁 File uploaded: " + uploaded_file.name)
         asset_notes = st.text_area("Optional Notes", placeholder="Write any thoughts, context, or observations about this file.")
 
-# Summary area
+# -------------------------
+# AI Summary & Tags
+# -------------------------
+
 if st.button("🧠 Generate AI Summary"):
     st.info("AI will soon analyze your content and generate a summary here.")
 
 summary = st.text_area("AI Summary", placeholder="AI-generated summary will appear here. You can edit it.")
 
-# Tag area
 st.markdown("##### Suggested Tags")
 existing_tags = ["#AI", "#mindtag", "#note", "#video", "#inspiration"]
 selected_tags = st.multiselect("AI-generated tags (you can add or remove)", options=existing_tags, default=["#mindtag"])
 
-# Submission buttons
+# -------------------------
+# Submission Section
+# -------------------------
+
 col1, col2 = st.columns(2)
 with col1:
     if st.button("Generate Preview"):
