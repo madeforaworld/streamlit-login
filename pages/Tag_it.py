@@ -13,6 +13,7 @@ folder_list = ["News Articles", "Recipes", "Todo", "Thoughts", "Funny Videos", "
 selected_folder = st.session_state.get("selected_folder", None)
 
 st.markdown("#### Select Folder")
+st.markdown("<small style='color:#999;'>Click a folder below or create a new one.</small>", unsafe_allow_html=True)
 
 st.markdown("""
 <style>
@@ -68,15 +69,9 @@ folder_area = st.empty()
 selected_folder = st.session_state.get("selected_folder", None)
 creating_folder = st.session_state.get("creating_folder", False)
 
-# Render folder chips inline with improved spacing
-chip_html = """
+# Render folder chips inline using real Streamlit buttons
+st.markdown("""
 <style>
-.folder-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 10px;
-}
 .folder-chip {
     padding: 6px 14px;
     border-radius: 20px;
@@ -87,6 +82,9 @@ chip_html = """
     color: #333;
     cursor: pointer;
     transition: 0.2s ease;
+    display: inline-block;
+    margin: 4px 6px 4px 0;
+    text-align: center;
 }
 .folder-chip.selected {
     background-color: #3366FF;
@@ -94,40 +92,34 @@ chip_html = """
     border-color: #3366FF;
 }
 </style>
-<div class='folder-bar'>
-"""
+""", unsafe_allow_html=True)
 
-for f in folder_list:
-    selected = 'selected' if f == selected_folder else ''
-    chip_html += f"<button class='folder-chip {selected}' onclick=\"window.location.href='?folder={f}'\">{f}</button>"
+st.markdown("#### Select Folder")
 
-chip_html += "<button class='folder-chip' onclick=\"window.location.href='?folder=__create__'\">➕ Create</button></div>"
-st.markdown(chip_html, unsafe_allow_html=True)
+folder_cols = st.columns(len(folder_list) + 1)
+for i, f in enumerate(folder_list):
+    with folder_cols[i]:
+        if st.button(f, key=f"folder_{f}"):
+            st.session_state["selected_folder"] = f
+        if st.session_state.get("selected_folder") == f:
+            st.markdown(f"<div class='folder-chip selected'>{f}</div>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"<div class='folder-chip'>{f}</div>", unsafe_allow_html=True)
 
-folder_query = st.query_params.get("folder")
-if folder_query:
-    if folder_query == "__create__":
-        new_folder = st.text_input("Name your new folder:", key="new_folder_input")
-        if new_folder:
-            folder_list.append(new_folder)
-            st.session_state["selected_folder"] = new_folder
-            st.experimental_set_query_params()
-            st.success(f"✅ Folder '{new_folder}' created and selected.")
-    else:
-        st.session_state["selected_folder"] = folder_query
+with folder_cols[-1]:
+    if st.button("➕ Create", key="folder_create"):
+        st.session_state["creating_folder"] = True
+
+if st.session_state.get("creating_folder"):
+    new_folder = st.text_input("Name your new folder:", key="new_folder_input")
+    if new_folder:
+        folder_list.append(new_folder)
+        st.session_state["selected_folder"] = new_folder
+        st.session_state["creating_folder"] = False
+        st.success(f"✅ Folder '{new_folder}' created and selected.")
 
 folder = st.session_state.get("selected_folder")
 
-# Fallback if user creates new folder
-folder_query = st.query_params.get("folder")
-if folder_query:
-    st.session_state["selected_folder"] = folder_query
-    if folder_query == "➕ Create New Folder":
-        new_name = new_folder_input.text_input("Enter new folder name")
-        if new_name:
-            folder_list.append(new_name)
-            st.session_state["selected_folder"] = new_name
-            st.success(f"✅ New folder '{new_name}' added!")
 
 folder = st.session_state.get("selected_folder")
 
@@ -138,13 +130,7 @@ if folder is None and 'Link' in st.session_state.get("content_type", ""):
     folder = "News Articles"
     st.session_state["selected_folder"] = folder
 
-if folder == "➕ Create New Folder":
-    new_folder = st.text_input("Enter new folder name")
-    if new_folder:
-        folder_list.append(new_folder)
-        folder = new_folder
-        st.session_state["selected_folder"] = new_folder
-        st.success(f"✅ New folder '{new_folder}' added!")
+
 
 
 content_type = st.selectbox("Choose content type", ["Text", "Link", "Asset"])
