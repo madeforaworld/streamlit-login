@@ -2,12 +2,11 @@ import streamlit as st
 from datetime import datetime
 from streamlit_quill import st_quill
 from openai import OpenAI
-from newspaper import Article
 from bs4 import BeautifulSoup
 import requests
 import re
 
-# Secure OpenAI client (v1.x)
+# Secure OpenAI client
 client = OpenAI(api_key=st.secrets["openai_key"])
 
 # -------------------------------
@@ -98,18 +97,14 @@ elif content_type == "Asset":
 # -------------------------------
 def extract_text_from_link(url):
     try:
-        article = Article(url)
-        article.download()
-        article.parse()
-        return article.text.strip()
-    except:
-        try:
-            response = requests.get(url, timeout=5)
-            soup = BeautifulSoup(response.text, 'html.parser')
-            paragraphs = soup.find_all('p')
-            return "\n".join([p.get_text() for p in paragraphs]).strip()
-        except:
+        response = requests.get(url, timeout=5)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        paragraphs = soup.find_all('p')
+        if not paragraphs:
             return None
+        return "\n\n".join([p.get_text() for p in paragraphs]).strip()
+    except Exception as e:
+        return None
 
 def parse_summary_and_tags(raw_output):
     tags = re.findall(r"#\w+", raw_output)
