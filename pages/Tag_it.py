@@ -66,20 +66,18 @@ if folder is None and content_type == "Link":
 # --------------------------------------
 
 user_content = ""
-notes = ""
+text_content = ""
 
 if content_type == "Text":
     st.markdown("<small style='color: #666;'>Use the editor below for rich content — bullets, bold, headers, and checkboxes supported.</small>", unsafe_allow_html=True)
-    user_content = st_quill(key="editor_text", placeholder="Start typing your thoughts here...")
-
-    st.markdown("##### Optional Notes")
-    notes = st_quill(key="editor_text_notes", placeholder="Additional context or notes...")
+    st.markdown("##### Text")
+    text_content = st_quill(key="editor_text", placeholder="Start typing your thoughts here...")
+    user_content = text_content
 
 elif content_type == "Link":
     user_content = st.text_input("Paste a URL (e.g. article, video, social post)")
-
-    st.markdown("##### Optional Notes")
-    notes = st_quill(key="editor_link_notes", placeholder="Write any personal notes or context about this link.")
+    st.markdown("##### Text")
+    text_content = st_quill(key="editor_link", placeholder="Write any personal notes or context about this link.")
 
 elif content_type == "Asset":
     uploaded_file = st.file_uploader("Upload a file (PDF, image, doc, audio, etc.)")
@@ -87,43 +85,8 @@ elif content_type == "Asset":
         user_content = uploaded_file.name
         st.info("📁 File uploaded: " + uploaded_file.name)
 
-    st.markdown("##### Optional Notes")
-    notes = st_quill(key="editor_asset_notes", placeholder="Write any thoughts, context, or observations about this file.")
+    st.markdown("##### Text")
+    text_content = st_quill(key="editor_asset", placeholder="Write any thoughts, context, or observations about this file.")
 
 # --------------------------------------
-# AI Summary & Tags
-# --------------------------------------
-
-if st.button("🧠 Generate AI Summary"):
-    st.info("AI will soon analyze your content and generate a summary here.")
-
-summary = st.text_area("AI Summary", placeholder="AI-generated summary will appear here. You can edit it.")
-
-st.markdown("##### Suggested Tags")
-existing_tags = ["#AI", "#mindtag", "#note", "#video", "#inspiration"]
-selected_tags = st.multiselect("AI-generated tags (you can add or remove)", options=existing_tags, default=["#mindtag"])
-
-# --------------------------------------
-# Submission Area
-# --------------------------------------
-
-col1, col2 = st.columns(2)
-
-with col1:
-    if st.button("Generate Preview"):
-        st.markdown("---")
-        st.markdown(f"""
-        <div style='border: 1px solid #ddd; border-radius: 12px; padding: 1rem; background-color: #fefefe;'>
-            <h4>🔍 Preview</h4>
-            <p><strong>Type:</strong> {content_type}</p>
-            <p><strong>Folder:</strong> {folder}</p>
-            <p><strong>Summary:</strong> {summary}</p>
-            <p><strong>Content:</strong><br>{user_content}</p>
-            <p><strong>Notes:</strong><br>{notes}</p>
-            <p><strong>Tags:</strong> {' '.join(selected_tags)}</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-with col2:
-    if st.button("Save Content"):
-        st.success("✅ Content saved! (This will connect to database in future phase)")
+# AI
