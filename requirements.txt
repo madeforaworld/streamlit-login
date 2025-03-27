@@ -7,3 +7,4 @@ transformers
 torch
 sentencepiece  # sometimes needed for tokenizers
 openai>=1.0.0
+newspaper3k
