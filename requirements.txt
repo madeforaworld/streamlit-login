@@ -6,4 +6,4 @@ streamlit-quill
 transformers
 torch
 sentencepiece  # sometimes needed for tokenizers
-openai
+openai>=1.0.0
