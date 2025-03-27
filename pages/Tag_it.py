@@ -68,24 +68,53 @@ folder_area = st.empty()
 selected_folder = st.session_state.get("selected_folder", None)
 creating_folder = st.session_state.get("creating_folder", False)
 
-cols = st.columns(len(folder_list) + 1)
-for i, f in enumerate(folder_list):
-    with cols[i]:
-        if st.button(f, key=f"folder_{f}"):
-            st.session_state["selected_folder"] = f
-            st.session_state["creating_folder"] = False
+# Render folder chips inline with improved spacing
+chip_html = """
+<style>
+.folder-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+.folder-chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+.folder-chip.selected {
+    background-color: #3366FF;
+    color: white;
+    border-color: #3366FF;
+}
+</style>
+<div class='folder-bar'>
+"""
 
-with cols[-1]:
-    if creating_folder:
-        new_folder = st.text_input("New folder name", key="new_folder_input")
+for f in folder_list:
+    selected = 'selected' if f == selected_folder else ''
+    chip_html += f"<button class='folder-chip {selected}' onclick=\"window.location.href='?folder={f}'\">{f}</button>"
+
+chip_html += "<button class='folder-chip' onclick=\"window.location.href='?folder=__create__'\">➕ Create</button></div>"
+st.markdown(chip_html, unsafe_allow_html=True)
+
+folder_query = st.query_params.get("folder")
+if folder_query:
+    if folder_query == "__create__":
+        new_folder = st.text_input("Name your new folder:", key="new_folder_input")
         if new_folder:
             folder_list.append(new_folder)
             st.session_state["selected_folder"] = new_folder
-            st.session_state["creating_folder"] = False
-            st.success(f"✅ New folder '{new_folder}' added!")
+            st.experimental_set_query_params()
+            st.success(f"✅ Folder '{new_folder}' created and selected.")
     else:
-        if st.button("➕ Create", key="new_folder_btn"):
-            st.session_state["creating_folder"] = True
+        st.session_state["selected_folder"] = folder_query
 
 folder = st.session_state.get("selected_folder")
 
