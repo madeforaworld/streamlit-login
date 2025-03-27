@@ -3,3 +3,6 @@ streamlit-authenticator
 pyrebase4
 setuptools
 streamlit-quill
+transformers
+torch
+sentencepiece  # sometimes needed for tokenizers
