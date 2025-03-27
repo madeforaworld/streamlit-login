@@ -1,5 +1,6 @@
 import streamlit as st
 from datetime import datetime
+from streamlit_quill import st_quill
 
 st.set_page_config(page_title="Tag It | MindTag", layout="wide", page_icon="🏷️")
 
@@ -8,10 +9,8 @@ st.markdown("""
     <p style='color: #555;'>Create a new content item. Content type determines how it's processed by AI.</p>
 """, unsafe_allow_html=True)
 
-from streamlit_quill import st_quill
-
 # --------------------------------------
-# Folder State & Defaults
+# Folder State & Dropdown
 # --------------------------------------
 
 if "folder_list" not in st.session_state:
@@ -25,21 +24,20 @@ if "creating_folder" not in st.session_state:
 
 folder_options = st.session_state.folder_list + ["➕ Create New Folder"]
 
-# --------------------------------------
-# Folder Dropdown + New Folder Logic
-# --------------------------------------
-
 st.markdown("#### Select Folder")
-selected_folder = st.selectbox("Choose a folder", folder_options, index=folder_options.index(st.session_state.selected_folder) if st.session_state.selected_folder in folder_options else 0)
+selected_folder = st.selectbox(
+    "Choose a folder",
+    folder_options,
+    index=folder_options.index(st.session_state.selected_folder)
+    if st.session_state.selected_folder in folder_options else 0
+)
 
-# Show input only when "create new" is selected
 if selected_folder == "➕ Create New Folder":
     st.session_state.creating_folder = True
 else:
     st.session_state.selected_folder = selected_folder
-    st.session_state.creating_folder = False  # Reset if not selected anymore
+    st.session_state.creating_folder = False
 
-# Inline new folder input
 if st.session_state.creating_folder:
     new_folder = st.text_input("Name your new folder:")
     if new_folder:
@@ -74,8 +72,12 @@ if content_type == "Text":
     st.markdown("<small style='color: #666;'>Use the editor below for rich content — bullets, bold, headers, and checkboxes supported.</small>", unsafe_allow_html=True)
     user_content = st_quill(key="editor_text", placeholder="Start typing your thoughts here...")
 
+    st.markdown("##### Optional Notes")
+    notes = st_quill(key="editor_text_notes", placeholder="Additional context or notes...")
+
 elif content_type == "Link":
     user_content = st.text_input("Paste a URL (e.g. article, video, social post)")
+
     st.markdown("##### Optional Notes")
     notes = st_quill(key="editor_link_notes", placeholder="Write any personal notes or context about this link.")
 
@@ -84,8 +86,9 @@ elif content_type == "Asset":
     if uploaded_file:
         user_content = uploaded_file.name
         st.info("📁 File uploaded: " + uploaded_file.name)
-        st.markdown("##### Optional Notes")
-        notes = st_quill(key="editor_asset_notes", placeholder="Write any thoughts, context, or observations about this file.")
+
+    st.markdown("##### Optional Notes")
+    notes = st_quill(key="editor_asset_notes", placeholder="Write any thoughts, context, or observations about this file.")
 
 # --------------------------------------
 # AI Summary & Tags
