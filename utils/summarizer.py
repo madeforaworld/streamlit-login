@@ -1,60 +1,62 @@
-from transformers import pipeline
+import openai
+from openai import OpenAI
 
-# Load Hugging Face model once
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+client = OpenAI(api_key=st.secrets["openai_key"])
 
 def generate_summary(text, folder):
-    # Route based on folder
+    if not text.strip():
+        return "⚠️ No content provided."
+
     if folder == "Recipes":
-        custom_prompt = f"""Summarize this recipe in 250 words or less.
-Include:
+        prompt = f"""Summarize this recipe in under 250 words. Include:
 - Type of food
-- Number of ingredients (list them at a high level)
+- Number of ingredients (list them)
 - Prep/cook time
 - Short description of the dish
 
-Content:
+Recipe:
 {text}
 """
 
     elif folder == "News Articles":
-        custom_prompt = f"""Summarize this news article.
-Include:
-- Main event
-- When it happened
+        prompt = f"""Summarize the following news article in 4–5 bullet points. Include:
+- What happened
+- When and where it happened
 - Who is involved
-- Key facts
-- Date, topic, or people mentioned
+- Key facts or stats
+- Topic and entities if possible
 
-Content:
+Article:
 {text}
 """
 
     elif folder == "Books":
-        custom_prompt = f"""Summarize this book in under 250 words.
-Include:
-- What it's about
-- Themes or chapters
+        prompt = f"""Summarize this book in under 250 words. Include:
+- What the book is about
+- Themes or structure
 - Type of book (e.g. fiction, memoir)
-- Main takeaway
+- Key takeaway or message
 
-Content:
+Book:
 {text}
 """
-
-    else:  # Thoughts, To-Do, Notes, etc.
-        custom_prompt = f"""This is a personal note, to-do, or freeform content.
-Summarize it in under 200 words.
-Include:
+    else:
+        prompt = f"""Summarize this personal note or text. Include:
 - What it's about
-- Any actions or ideas
-- General tone or topic
+- Any key actions, plans, or ideas
+- Tone or purpose (todo, reflection, brainstorm)
 - 2–3 suggested tags
 
-Content:
+Note:
 {text}
 """
 
-    # Run summary model
-    result = summarizer(custom_prompt, max_length=200, min_length=50, do_sample=False)
-    return result[0]["summary_text"]
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.5,
+    )
+
+    return response.choices[0].message.content
