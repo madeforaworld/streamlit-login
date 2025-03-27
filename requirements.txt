@@ -8,6 +8,7 @@ torch
 sentencepiece  # sometimes needed for tokenizers
 openai>=1.0.0
 newspaper3k
+lxml
 beautifulsoup4
 requests
 
